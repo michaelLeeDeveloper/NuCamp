@@ -4,7 +4,7 @@
   "description": "This is a website for the fictional campsites review site NuCamp.",
   "main": "index.html",
   "scripts": {
-    "build": "npm run clean && npm run imagemin && npm run copyfonts && npm run usemin",
+    "buildSite": "npm run clean && npm run imagemin && npm run copyfonts && npm run usemin",
     "copyfonts": "copyfiles -f node_modules/font-awesome/fonts/* dist/fonts",
     "lite": "lite-server",
     "clean": "rimraf dist",
