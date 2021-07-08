@@ -22,7 +22,7 @@ class Header extends Component {
         this.toggleModal();
         event.preventDefault();
     }
-    
+
     toggleModal() {
         this.setState({
             isModalOpen: !this.state.isModalOpen
@@ -75,7 +75,7 @@ class Header extends Component {
                                         <i className="fa fa-address-card fa-lg" /> Contact Us
                                     </NavLink>
                                 </NavItem>
-                                </Nav>
+                            </Nav>
                             <span className="navbar-text ml-auto">
                                 <Button outline onClick={this.toggleModal}>
                                     <i className="fa fa-sign-in fa-lg" /> Login
@@ -88,7 +88,7 @@ class Header extends Component {
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>Login</ModalHeader>
                     <ModalBody>
-                    <Form onSubmit={this.handleLogin}>
+                        <Form onSubmit={this.handleLogin}>
                             <FormGroup>
                                 <Label htmlFor="username">Username</Label>
                                 <Input type="text" id="username" name="username"

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card, CardImg, CardText, CardBody, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Label } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
+import { baseUrl } from '../shared/baseUrl';
 
 
 const required = val => val && val.length;
@@ -12,7 +13,7 @@ function RenderCampsite({ campsite }) {
     return (
         <div className="col-md-5 m-1">
             <Card>
-                <CardImg top src={campsite.image} alt={campsite.name} />
+                <CardImg top src={baseUrl + campsite.image} alt={campsite.name} />
                 <CardBody>
                     <CardText>{campsite.description}</CardText>
                 </CardBody>
@@ -21,7 +22,7 @@ function RenderCampsite({ campsite }) {
     )
 }
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, postComment, campsiteId }) {
     return (
         (comments)
             ? <div className="col-md-5 m-1">
@@ -36,20 +37,20 @@ function RenderComments({ comments }) {
                         </div>
                     )
                 })}
-                <CommentForm />
+                <CommentForm campsiteId={campsiteId} postComment={postComment} />
             </div>
             : <div />
     )
 }
 
 class CommentForm extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             isModalOpen: false
         }
         this.toggleModal = this.toggleModal.bind(this);
-        this.handleClick = this.handleClick.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     toggleModal() {
@@ -58,10 +59,9 @@ class CommentForm extends Component {
         });
     }
 
-    handleClick(values) {
-        console.log("Current state is: " + JSON.stringify(values));
-        alert("Current state is: " + JSON.stringify(values));
+    handleSubmit(values) {
         this.toggleModal();
+        this.props.postComment(this.props.campsiteId, values.rating, values.author, values.text);
     }
     render() {
         return (
@@ -69,7 +69,7 @@ class CommentForm extends Component {
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>Login</ModalHeader>
                     <ModalBody>
-                        <LocalForm onSubmit={values => this.handleClick(values)}>
+                        <LocalForm onSubmit={values => this.handleSubmit(values)}>
                             <div className="form-group">
                                 <Label htmlFor="rating">Rating</Label>
                                 <Control.select id="rating" name="rating" model=".rating" className="form-control">
@@ -82,30 +82,30 @@ class CommentForm extends Component {
                             </div>
                             <div className="form-group">
                                 <Label htmlFor="author">Your Name</Label>
-                                <Control.text model=".author" 
-                                id="author" name="author" 
-                                placeholder="Your Name" 
-                                className="form-control" 
-                                validators={{
-                                    minLength: minLength(2),
-                                    maxLength: maxLength(15)
+                                <Control.text model=".author"
+                                    id="author" name="author"
+                                    placeholder="Your Name"
+                                    className="form-control"
+                                    validators={{
+                                        minLength: minLength(2),
+                                        maxLength: maxLength(15)
                                     }} />
-                                    <Errors
-                                        className="text-danger"
-                                        model=".author"
-                                        show="touched"
-                                        component="div"
-                                        messages={{
-                                            required,
-                                            minLength: 'Must be at least 2 characters',
-                                            maxLength: 'Must be 15 characters or less'
-                                        }}
-                                    />
+                                <Errors
+                                    className="text-danger"
+                                    model=".author"
+                                    show="touched"
+                                    component="div"
+                                    messages={{
+                                        required,
+                                        minLength: 'Must be at least 2 characters',
+                                        maxLength: 'Must be 15 characters or less'
+                                    }}
+                                />
                             </div>
                             <div className="form-group">
                                 <Label htmlFor="text">Comment</Label>
-                                <Control.textarea model=".text" id="text" name="text" 
-                                 className="form-control" rows="6" />
+                                <Control.textarea model=".text" id="text" name="text"
+                                    className="form-control" rows="6" />
                             </div>
                             <Button color="primary">Submit</Button>
                         </LocalForm>
@@ -133,7 +133,11 @@ function CampsiteInfo(props) {
                 </div>
                 <div className="row">
                     <RenderCampsite campsite={props.campsite} />
-                    <RenderComments comments={props.comments} />
+                    <RenderComments
+                        comments={props.comments}
+                        postComment={props.postComment}
+                        campsiteId={props.campsite.id}
+                    />
                 </div>
             </div>
         );
